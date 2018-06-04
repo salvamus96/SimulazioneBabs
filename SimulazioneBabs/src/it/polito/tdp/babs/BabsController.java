@@ -29,6 +29,7 @@ public class BabsController {
 	private URL location;
 
 	@FXML
+	// implementa un calendario
 	private DatePicker pickData;
 
 	@FXML
@@ -39,9 +40,10 @@ public class BabsController {
 
 	@FXML
 	void doContaTrip(ActionEvent event) {
-		
+		txtResult.clear();
 		try {
-			txtResult.clear();
+			
+			// restituisce una LocalDate
 			LocalDate date = pickData.getValue();
 			List<CountResult> results = model.getTripCounts(date);
 
@@ -61,15 +63,18 @@ public class BabsController {
 
 	@FXML
 	void doSimula(ActionEvent event) {
+		txtResult.clear();
 		try {
-			txtResult.clear();
+			
 			LocalDate date = pickData.getValue();
 			
+			// getDayOfWeek va da Monday a Sunday
 			if (date.getDayOfWeek().getValue() > 4) {
 				txtResult.setText("Selezionare una data dal Lun al Ven");
 				return;
 			}
 			
+			// slider è una barra mobile di valori predefiniti
 			Double k = sliderK.getValue();
 			SimulationResult sr = model.simula(date, k);
 			txtResult.setText(sr.toString());

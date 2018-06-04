@@ -11,12 +11,16 @@ public class Simulazione {
 	
 	private LocalDate date;
 	private double k;
-	private PriorityQueue<Event> pq;
 	private Model model;
+	
+	// coda prioritaria di eventi da processare in relazione temporale
+	private PriorityQueue<Event> pq;
+	
 	private int PICKmiss = 0;
 	private int DROPmiss = 0;
 	private Map<Station, Integer> stationCount;
 	
+	// tipi di eventi esclusivi tra loro
 	private enum EventType {
 		PICK, DROP;
 	}
@@ -24,11 +28,14 @@ public class Simulazione {
 	public Simulazione(LocalDate date, double k, Model model) {
 		this.date = date;
 		this.k = k;
-		this.model = model;
+		this.model = model; // si usa il model su cui si sta operando
 		pq = new PriorityQueue<Event>();
 		stationCount = new HashMap<Station, Integer>();
 	}
 	
+	/**
+	 * Tale metodo si occupa sia dell'avvio della simulazione ma all'inizio anche dell'inizializzazione
+	 */
 	public void run() {
 		List<Trip> trips = model.getTripsByDate(date);
 		
@@ -44,10 +51,12 @@ public class Simulazione {
 		
 		// processare gli eventi
 		while(!pq.isEmpty()) {
+			// estrazione dell'evento in testa alla coda
 			Event e = pq.poll();
 			
 			switch(e.type) {
 			case PICK:
+				// accedo alla stazione tramite l'id della stazione di partenza del trip con IdentityMap
 				Station station = model.stationIdMap.get(e.trip.getStartStationID());
 				int count = stationCount.get(station);
 				
@@ -70,6 +79,7 @@ public class Simulazione {
 				if (station.getDockCount() > count) {
 					// ci sono ancora dei posti disponibili
 					count++;
+					// sovrascrive il count della stazione presente nella mappa
 					stationCount.put(station, count);
 				} else {
 					DROPmiss++;
@@ -79,14 +89,22 @@ public class Simulazione {
 		}
 	}
 
+	/**
+	 * Restituisce un oggetto predisposto per la visualizzazione in interfaccia
+	 * @return
+	 */
 	public SimulationResult getResults() {
 		return new SimulationResult(PICKmiss, DROPmiss);
 	}
 	
+	// la classe evento esiste sono in relazione alla classe simulazione
 	private class Event implements Comparable<Event> {
 		
 		EventType type;
+		// la data è necessaria per poter ordinare gli eventi in scala temporale
+		// meglio usare LocalDateTime perchè nel confronto rientra anche l'orario e non solo il giorno
 		LocalDateTime date;
+		// ogni evento è associato a un specifico trip
 		Trip trip;
 		
 		public Event(EventType type, LocalDateTime date, Trip trip) {

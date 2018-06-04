@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class StationIdMap {
 	
-	private Map<Integer, Station> map = new HashMap();
+	private Map<Integer, Station> map = new HashMap<>();
 	
 	public Station get(int stationID) {
 		return map.get(stationID);

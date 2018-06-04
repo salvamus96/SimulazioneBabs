@@ -80,6 +80,8 @@ public class BabsDAO {
 
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
+			
+			// trasformazione di un LocalDate in Date
 			st.setDate(1, Date.valueOf(date));
 			st.setInt(2, station.getStationID());
 			ResultSet rs = st.executeQuery();
