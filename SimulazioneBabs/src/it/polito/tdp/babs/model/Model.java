@@ -11,7 +11,7 @@ public class Model {
 
 	private BabsDAO bdao;
 	private List<Station> stations;
-	private StationIdMap stationIdMap;
+	StationIdMap stationIdMap;
 	
 	public Model() {
 		bdao = new BabsDAO();
@@ -36,11 +36,16 @@ public class Model {
 		Collections.sort(results);
 		return results;
 	}
+	
+	public List<Station> getStations() {
+		return stations;
+	}
 
-	public void simula(LocalDate date, Double k) {
+	public SimulationResult simula(LocalDate date, Double k) {
 		
 		Simulazione sim = new Simulazione(date, k, this);
 		sim.run();
+		return sim.getResults();
 	}
 
 }
